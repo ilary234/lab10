@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -59,10 +61,8 @@ public final class LambdaUtilities {
      */
     public static <T> List<Optional<T>> optFilter(final List<T> list, final Predicate<T> pre) {
         final List<Optional<T>> l = new ArrayList<>();
-        list.forEach(t -> {
-            l.add(Optional.of(t).filter(pre));
-        }); 
-        return null;
+        list.forEach(t -> l.add(Optional.ofNullable(t).filter(pre))); 
+        return l;
     }
 
     /**
@@ -79,11 +79,13 @@ public final class LambdaUtilities {
      */
     public static <R, T> Map<R, Set<T>> group(final List<T> list, final Function<T, R> op) {
         final Map<R, Set<T>> map = new HashMap<>();
-        list.forEach(t -> {
-            final R key = op.apply(t);
-            map.merge(key, map.get(key), );
-        });
-        return null;
+        final BiFunction <Set<T>, Set<T>, Set<T>> finalSet = (s1, s2) -> {
+            final Set<T> s3 = new LinkedHashSet<>(s1);
+            s3.addAll(s2);
+            return s3;
+        };
+        list.forEach(t -> map.merge(op.apply(t), Set.of(t), finalSet));
+        return map;
     }
 
     /**
@@ -99,12 +101,9 @@ public final class LambdaUtilities {
      *         by the supplier
      */
     public static <K, V> Map<K, V> fill(final Map<K, Optional<V>> map, final Supplier<V> def) {
-        /*
-         * Suggestion: consider Optional.orElse
-         *
-         * Keep in mind that a map can be iterated through its forEach method
-         */
-        return null;
+        final Map<K, V> map2 = new HashMap<>();
+        map.forEach((k, v) -> map2.put(k, v.orElse(def.get())));
+        return map2;
     }
 
     /**
