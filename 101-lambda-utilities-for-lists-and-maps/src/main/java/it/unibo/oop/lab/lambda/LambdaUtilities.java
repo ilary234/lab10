@@ -58,9 +58,10 @@ public final class LambdaUtilities {
      *         otherwise.
      */
     public static <T> List<Optional<T>> optFilter(final List<T> list, final Predicate<T> pre) {
-        /*
-         * Suggestion: consider Optional.filter
-         */
+        final List<Optional<T>> l = new ArrayList<>();
+        list.forEach(t -> {
+            l.add(Optional.of(t).filter(pre));
+        }); 
         return null;
     }
 
@@ -77,9 +78,11 @@ public final class LambdaUtilities {
      *         based on the mapping done by the function
      */
     public static <R, T> Map<R, Set<T>> group(final List<T> list, final Function<T, R> op) {
-        /*
-         * Suggestion: consider Map.merge
-         */
+        final Map<R, Set<T>> map = new HashMap<>();
+        list.forEach(t -> {
+            final R key = op.apply(t);
+            map.merge(key, map.get(key), );
+        });
         return null;
     }
 
